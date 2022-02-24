@@ -1,0 +1,6 @@
+#!/bin/sh
+
+while true; do
+  setbg ~/Pictures/uToolsWallpapers
+  sleep 20m
+done

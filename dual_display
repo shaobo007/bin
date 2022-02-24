@@ -1,0 +1,12 @@
+#!/bin/sh
+# Get all possible displays
+allposs=$(xrandr -q | grep "connected")
+
+# Get all connected screens.
+screens=$(echo "$allposs" | awk '/ connected/ {print $1}')
+screen_pri=$(echo "$screens" | grep "HDMI")
+screen_sub=$(echo "$screens" | grep "DP")
+# If there's only one screen
+[ "$(echo "$screens" | wc -l)" -lt 2 ] && exit 0
+xrandr --output "$screen_pri" --primary --mode 1920x1080 --pos 0x0 --rotate normal --output "$screen_sub" --mode 1920x1080 --pos 1920x0 --rotate normal
+

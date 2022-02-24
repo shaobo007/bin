@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+#
+# Script name: dm-websearch
+# Description: Search various search engines (inspired by surfraw).
+# Dependencies: dmenu and brave
+# GitLab: https://www.gitlab.com/dwt1/dmscripts
+# License: https://www.gitlab.com/dwt1/dmscripts/LICENSE
+# Contributors: Derek Taylor
+#               Ali Furkan Yıldız
+#               HostGrady
+#               Simon Ingelsson
+
+# Set with the flags "-e", "-u","-o pipefail" cause the script to fail
+# if certain things happen, which is a good thing.  Otherwise, we can
+# get hidden bugs that are hard to discover.
+
+set -euo pipefail
+DMENU="dmenu -i -l 20 -p"
+# Search engine config
+declare -A websearch
+# Syntax:
+# websearch[name]="https://www.example.com/search?q="
+
+# Search Engines
+websearch[google]="https://www.google.com/search?q="
+websearch[baidu]="https://www.baidu.com/s?ie=utf-8&f=3&rsv_bp=1&tn=baidu&wd="
+# Information/News
+websearch[cnn]="https://www.cnn.com/search?q="
+websearch[wikipedia]="https://en.wikipedia.org/w/index.php?search="
+websearch[wiktionary]="https://en.wiktionary.org/w/index.php?search="
+# Social Media
+websearch[reddit]="https://www.reddit.com/search/?q="
+websearch[youtube]="https://www.youtube.com/results?search_query="
+# Linux
+websearch[archwiki]="https://wiki.archlinux.org/index.php?search="
+# Development
+websearch[github]="https://github.com/search?q="
+websearch[gitlab]="https://gitlab.com/search?search="
+websearch[googleOpenSource]="https://opensource.google/projects/search?q="
+# Etc
+main() {
+  # As this is loaded from other file it is technically not defined
+  # shellcheck disable=SC2154 # Choosing  a search engine by name from array above.
+  engine=$(printf '%s\n' "${!websearch[@]}" | sort | ${DMENU} 'Choose search engine:' "$@") || exit 1
+
+  # Getting the URL of the search engine we chose.
+  url="${websearch["${engine}"]}"
+
+  # Searching the chosen engine.
+  query=$(echo "$engine" | ${DMENU} 'Enter search query:')
+
+  # Display search results in web browser
+  # shellcheck disable=SC2154
+  surf-open "${url}${query}"
+}
+
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main "$@"

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+case $BLOCK_BUTTON in
+	1) setsid -f "$TERMINAL" -e watch -n 1 nvidia-smi ;;
+  2) notify-send "GPU temperature: $(nvidia-smi | sed -n '10p' | awk '{print $3}')"  ;;
+	3) notify-send "💾GPU module " "\- Shows GPU status.
+- Click to watch realtime GPU status.
+- Middle Click to show intensive processes.";;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+GPU_TEM=$(nvidia-smi | sed -n '10p' | awk '{print $3}')
+GPU_MEMUSED=$(nvidia-smi | sed -n '10p' | awk '{print $9}' | sed -r 's/(.*)MiB/\1/')
+GPU_MEMTOT=$(nvidia-smi | sed -n '10p' | awk '{print $11}' | sed -r 's/(.*)MiB/\1/')
+GPU_UTI=$(nvidia-smi | sed -n '10p' | awk '{print $13}' )
+#printf "| GPU %s %s/%s %s" "${GPU_TEM}" "${GPU_MEMUSED}" "${GPU_MEMTOT}" "${GPU_UTI}"
+printf "💾 %s/%s %s %s"  "${GPU_MEMUSED}" "${GPU_MEMTOT}" "${GPU_UTI}"
